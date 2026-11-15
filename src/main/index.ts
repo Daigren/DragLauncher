@@ -12,6 +12,10 @@ import { minecraftLauncher } from './launcher';
 let mainWindow: BrowserWindow | null = null;
 
 function createWindow() {
+  const iconPath = app.isPackaged
+    ? path.join(__dirname, '../../public/icon.png')
+    : path.join(__dirname, '../../public/icon.png');
+
   mainWindow = new BrowserWindow({
     width: 1100,
     height: 720,
@@ -19,6 +23,7 @@ function createWindow() {
     minHeight: 600,
     frame: false,
     backgroundColor: '#000000',
+    icon: path.join(__dirname, '../../public/icon.ico'),
     webPreferences: {
       preload: path.join(__dirname, '../preload/index.js'),
       nodeIntegration: false,

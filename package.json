@@ -51,14 +51,12 @@
     },
     "files": [
       "dist/**/*",
+      "public/**/*",
       "package.json"
     ],
     "win": {
+      "icon": "public/icon.ico",
       "target": [
-        {
-          "target": "dir",
-          "arch": ["x64"]
-        },
         {
           "target": "portable",
           "arch": ["x64"]
