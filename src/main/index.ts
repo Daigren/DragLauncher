@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import path from 'path';
 import { configManager } from './config';
 import { accountManager } from './accountManager';
@@ -131,4 +131,7 @@ function setupIpcHandlers() {
   // Settings
   ipcMain.handle('settings:get', () => configManager.getSettings());
   ipcMain.handle('settings:update', (_e, p) => configManager.updateSettings(p));
+
+  // External Links & Updates
+  ipcMain.handle('app:openExternal', (_e, url: string) => shell.openExternal(url));
 }

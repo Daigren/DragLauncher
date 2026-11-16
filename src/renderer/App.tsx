@@ -10,6 +10,8 @@ import {
   Box,
   SlidersHorizontal,
   AlertCircle,
+  GitBranch,
+  ExternalLink,
 } from 'lucide-react';
 import { Account, Instance, LaunchProgress } from '../shared/types';
 import { TitleBar } from './components/TitleBar';
@@ -139,11 +141,24 @@ export const App: React.FC = () => {
             {/* Primary Action Button (Pill style like in NovaCode screenshot) */}
             <button
               onClick={() => setIsCreateOpen(true)}
-              className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-white/20 hover:border-white/50 bg-white/5 hover:bg-white/10 text-white font-medium text-xs transition duration-150 mb-4"
+              className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-white/20 hover:border-white/50 bg-white/5 hover:bg-white/10 text-white font-medium text-xs transition duration-150 mb-3"
             >
               <Plus size={14} />
               Новый инстанс
             </button>
+
+            {/* Selected Instance Version Card */}
+            {selectedInstance && (
+              <div className="mb-3 px-3 py-2 rounded-xl bg-nova-900/80 border border-nova-border text-left">
+                <div className="text-[10px] uppercase font-mono tracking-wider text-neutral-500 mb-0.5">Выбран инстанс</div>
+                <div className="text-xs font-semibold text-white truncate">{selectedInstance.name}</div>
+                <div className="flex items-center gap-1.5 mt-1 text-[11px] font-mono text-cyan-400">
+                  <span>MC {selectedInstance.minecraftVersion}</span>
+                  <span className="text-neutral-600">•</span>
+                  <span className="text-neutral-400 capitalize">{selectedInstance.loaderType}</span>
+                </div>
+              </div>
+            )}
 
             {/* Launch button */}
             <button
@@ -189,8 +204,23 @@ export const App: React.FC = () => {
             </button>
           </div>
 
-          {/* Bottom Settings Button */}
-          <div className="pt-2 border-t border-nova-border">
+          {/* Bottom Controls */}
+          <div className="pt-2 border-t border-nova-border space-y-1">
+            <button
+              onClick={() => window.api.app.openExternal('https://github.com/Daigren/DragLauncher/releases')}
+              className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs text-neutral-400 hover:text-cyan-400 hover:bg-white/5 transition duration-150 group"
+              title="Проверить обновления на GitHub"
+            >
+              <div className="flex items-center gap-2.5">
+                <GitBranch size={14} strokeWidth={1.5} className="group-hover:text-cyan-400 text-neutral-500 transition" />
+                <span>Обновления</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <span className="text-[10px] font-mono text-neutral-500 group-hover:text-cyan-500/80">v1.0.0</span>
+                <ExternalLink size={10} className="text-neutral-600 group-hover:text-cyan-400 transition" />
+              </div>
+            </button>
+
             <button
               onClick={() => setIsSettingsOpen(true)}
               className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs text-neutral-400 hover:text-white hover:bg-white/5 transition duration-150"

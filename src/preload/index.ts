@@ -95,6 +95,9 @@ export const api = {
     update: (partial: Partial<AppSettings>): Promise<AppSettings> =>
       ipcRenderer.invoke('settings:update', partial),
   },
+  app: {
+    openExternal: (url: string): Promise<void> => ipcRenderer.invoke('app:openExternal', url),
+  },
   window: {
     minimize: () => ipcRenderer.send('window:minimize'),
     maximize: () => ipcRenderer.send('window:maximize'),

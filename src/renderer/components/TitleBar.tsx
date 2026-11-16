@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Minus, Square, X, User, ChevronDown, Plus, Shield } from 'lucide-react';
+import { Minus, Square, X, User, ChevronDown, Plus, Shield, GitBranch, ExternalLink } from 'lucide-react';
 import { Account } from '../../shared/types';
 
 interface TitleBarProps {
@@ -40,6 +40,18 @@ export const TitleBar: React.FC<TitleBarProps> = ({
         <span className="font-bold text-xs tracking-tight text-white flex items-center gap-1.5">
           Drag<span className="text-neutral-400 font-normal">Launcher</span>
         </span>
+
+        {/* GitHub Updates Link */}
+        <button
+          onClick={() => window.api.app.openExternal('https://github.com/Daigren/DragLauncher/releases')}
+          className="ml-2 flex items-center gap-1.5 border border-white/10 hover:border-cyan-500/40 hover:text-cyan-400 bg-nova-900/80 px-2.5 py-0.5 rounded-full text-[11px] text-neutral-400 transition titlebar-nodrag group"
+          title="Открыть страницу обновлений на GitHub"
+        >
+          <GitBranch size={11} className="text-neutral-500 group-hover:text-cyan-400 transition" />
+          <span>v1.0.0</span>
+          <span className="text-[10px] text-neutral-600 group-hover:text-cyan-500/70 transition">Обновления</span>
+          <ExternalLink size={10} className="text-neutral-600 group-hover:text-cyan-400 opacity-60 group-hover:opacity-100 transition" />
+        </button>
       </div>
 
       {/* Account Switcher - Minimalist Pill */}
