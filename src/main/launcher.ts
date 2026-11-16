@@ -187,6 +187,19 @@ export class MinecraftLauncher {
     // Strip any accidental wrapping quotes
     const javaExecutable = rawJavaPath.replace(/^["']|["']$/g, '');
 
+    // Check Java compatibility
+    const javaCheck = javaDetector.checkJavaCompatibility(instance.minecraftVersion, javaExecutable);
+    if (!javaCheck.valid) {
+      if (javaCheck.reason === 'too_old') {
+        throw new Error(
+          `Для Minecraft ${instance.minecraftVersion} требуется Java ${javaCheck.requiredMajor} (64-bit), а у вас обнаружена более старая Java. Пожалуйста, обновите Java.`
+        );
+      }
+      throw new Error(
+        `Java ${javaCheck.requiredMajor} не обнаружена на компьютере. Установите Java ${javaCheck.requiredMajor} для запуска Minecraft ${instance.minecraftVersion}.`
+      );
+    }
+
     // 7. Assemble JVM & Game arguments
     const minMem = instance.minMemory || configManager.getSettings().defaultMinMemory || 1024;
     const maxMem = instance.maxMemory || configManager.getSettings().defaultMaxMemory || 4096;

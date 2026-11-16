@@ -127,6 +127,26 @@ function setupIpcHandlers() {
   ipcMain.handle('meta:getMinecraftVersions', () => mojangService.getVersions());
   ipcMain.handle('meta:detectJava', () => javaDetector.detectJavaInstallations());
   ipcMain.handle('meta:getFabricLoaders', (_e, mcVer) => fabricService.getLoaderVersions(mcVer));
+  ipcMain.handle('meta:checkJava', (_e, mcVer, customJava) =>
+    javaDetector.checkJavaCompatibility(mcVer, customJava)
+  );
+  ipcMain.handle('meta:downloadJavaInstaller', async (_e, major: number) => {
+    return javaDetector.downloadAndRunJavaInstaller(major, (pct) => {
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.webContents.send('java-download-progress', pct);
+      }
+    });
+  });
+  ipcMain.handle('meta:selectJavaExe', async () => {
+    if (!mainWindow) return null;
+    const res = await dialog.showOpenDialog(mainWindow, {
+      title: 'Укажите путь к java.exe',
+      filters: [{ name: 'Исполняемый файл Java', extensions: ['exe'] }],
+      properties: ['openFile'],
+    });
+    if (res.canceled || res.filePaths.length === 0) return null;
+    return res.filePaths[0];
+  });
 
   // Settings
   ipcMain.handle('settings:get', () => configManager.getSettings());

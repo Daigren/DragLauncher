@@ -78,6 +78,16 @@ export const api = {
     detectJava: (): Promise<any[]> => ipcRenderer.invoke('meta:detectJava'),
     getFabricLoaders: (mcVersion: string): Promise<any[]> =>
       ipcRenderer.invoke('meta:getFabricLoaders', mcVersion),
+    checkJava: (mcVersion: string, customJava?: string): Promise<any> =>
+      ipcRenderer.invoke('meta:checkJava', mcVersion, customJava),
+    downloadJavaInstaller: (major: number): Promise<string> =>
+      ipcRenderer.invoke('meta:downloadJavaInstaller', major),
+    selectJavaExe: (): Promise<string | null> => ipcRenderer.invoke('meta:selectJavaExe'),
+    onJavaDownloadProgress: (cb: (progress: number) => void) => {
+      const listener = (_e: any, pct: number) => cb(pct);
+      ipcRenderer.on('java-download-progress', listener);
+      return () => ipcRenderer.removeListener('java-download-progress', listener);
+    },
   },
   mods: {
     search: (query: string, mcVersion?: string, loader?: string): Promise<any[]> =>

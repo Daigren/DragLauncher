@@ -21,6 +21,7 @@ import { CreateInstanceModal } from './components/CreateInstanceModal';
 import { ModsModal } from './components/ModsModal';
 import { LogsModal } from './components/LogsModal';
 import { SettingsModal } from './components/SettingsModal';
+import { JavaModal } from './components/JavaModal';
 
 export const App: React.FC = () => {
   // State
@@ -37,6 +38,17 @@ export const App: React.FC = () => {
   const [isModsOpen, setIsModsOpen] = useState(false);
   const [isLogsOpen, setIsLogsOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [javaModalData, setJavaModalData] = useState<{
+    isOpen: boolean;
+    requiredMajor: number;
+    mcVersion: string;
+    reason?: 'missing' | 'too_old' | 'not_found';
+    instanceId?: string;
+  }>({
+    isOpen: false,
+    requiredMajor: 21,
+    mcVersion: '1.20',
+  });
 
   // Launch & logs state
   const [launchProgress, setLaunchProgress] = useState<LaunchProgress | null>(null);
@@ -92,6 +104,26 @@ export const App: React.FC = () => {
       setErrorToast('Пожалуйста, выберите или добавьте профиль (TLauncher, Ely.by или Offline)');
       setIsAccountsOpen(true);
       return;
+    }
+
+    const inst = instances.find((i) => i.id === instanceId);
+    if (inst) {
+      // Check Java compatibility before launching
+      try {
+        const javaCheck = await window.api.meta.checkJava(inst.minecraftVersion, inst.javaPath);
+        if (!javaCheck.valid) {
+          setJavaModalData({
+            isOpen: true,
+            requiredMajor: javaCheck.requiredMajor,
+            mcVersion: inst.minecraftVersion,
+            reason: javaCheck.reason,
+            instanceId,
+          });
+          return;
+        }
+      } catch (e) {
+        console.warn('Java check error', e);
+      }
     }
 
     try {
@@ -379,6 +411,19 @@ export const App: React.FC = () => {
       <SettingsModal
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
+      />
+
+      <JavaModal
+        isOpen={javaModalData.isOpen}
+        onClose={() => setJavaModalData({ ...javaModalData, isOpen: false })}
+        requiredMajor={javaModalData.requiredMajor}
+        mcVersion={javaModalData.mcVersion}
+        reason={javaModalData.reason}
+        onJavaConfigured={() => {
+          if (javaModalData.instanceId) {
+            handleLaunch(javaModalData.instanceId);
+          }
+        }}
       />
     </div>
   );
