@@ -219,6 +219,8 @@ export class MinecraftLauncher {
     const jvmArgs: string[] = [
       `-Xms${minMem}M`,
       `-Xmx${maxMem}M`,
+      '-Xss1M',
+      '-XX:StackShadowPages=32',
       '-XX:+UnlockExperimentalVMOptions',
       '-XX:+UseG1GC',
       '--enable-native-access=ALL-UNNAMED',
@@ -230,6 +232,32 @@ export class MinecraftLauncher {
       `-Dminecraft.launcher.brand=DragLauncher`,
       `-Dminecraft.launcher.version=1.0.0`,
     ];
+
+    // Process version-specific JVM arguments from Mojang
+    if (versionData.arguments && Array.isArray(versionData.arguments.jvm)) {
+      for (const item of versionData.arguments.jvm) {
+        if (typeof item === 'string') {
+          let val = item;
+          for (const [k, v] of Object.entries(replacements)) {
+            val = val.replaceAll(k, v);
+          }
+          if (val && !val.startsWith('-Djava.library.path') && !val.startsWith('-cp') && val !== '${classpath}') {
+            if (!jvmArgs.includes(val)) jvmArgs.push(val);
+          }
+        } else if (item && typeof item === 'object' && this.isRuleAllowed(item.rules)) {
+          const vals = Array.isArray(item.value) ? item.value : [item.value];
+          for (const rawVal of vals) {
+            let val = rawVal;
+            for (const [k, v] of Object.entries(replacements)) {
+              val = val.replaceAll(k, v);
+            }
+            if (val && !val.startsWith('-Djava.library.path') && !val.startsWith('-cp') && val !== '${classpath}') {
+              if (!jvmArgs.includes(val)) jvmArgs.push(val);
+            }
+          }
+        }
+      }
+    }
 
     // Add extra user-configured JVM args
     const extraJvm = (instance.jvmArgs || configManager.getSettings().defaultJvmArgs || '').trim();
@@ -417,9 +445,13 @@ export class MinecraftLauncher {
   }
 
   private isLibraryAllowed(lib: any): boolean {
-    if (!lib.rules) return true;
+    return this.isRuleAllowed(lib.rules);
+  }
+
+  private isRuleAllowed(rules?: any[]): boolean {
+    if (!rules || rules.length === 0) return true;
     let allowed = false;
-    for (const rule of lib.rules) {
+    for (const rule of rules) {
       if (rule.action === 'allow') {
         if (!rule.os || rule.os.name === 'windows') {
           allowed = true;
