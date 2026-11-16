@@ -45,8 +45,8 @@
 
 | Файл | Описание | Алгоритм | Хеш |
 | :--- | :--- | :--- | :--- |
-| `DragLauncher Setup 1.0.0.exe` | Установщик Windows (NSIS) | SHA-256 | `72F20BB6943D56C4E12C92AD62989EAE9E0492A0AFA52ED24305E6442852F40E` |
-| `DragLauncher 1.0.0.exe` | Портативная версия (Portable) | SHA-256 | `71B7FD86F38C420F0894679934EEE63C84F77BD5CCE96B17F6F2F3C83286154D` |
+| `DragLauncher Setup 1.0.0.exe` | Установщик Windows (NSIS) | SHA-256 | `BD7AEAE41877A27E93F54FCBF1FB52F725C7C950B814D1F5A004F7BDD4327A6A` |
+| `DragLauncher 1.0.0.exe` | Портативная версия (Portable) | SHA-256 | `8695A2DE22E84F065AACB60432C19C5138854B46D35144625CA1A30E5BF7E081` |
 
 ---
 
