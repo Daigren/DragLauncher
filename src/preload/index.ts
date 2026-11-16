@@ -94,6 +94,7 @@ export const api = {
     get: (): Promise<AppSettings> => ipcRenderer.invoke('settings:get'),
     update: (partial: Partial<AppSettings>): Promise<AppSettings> =>
       ipcRenderer.invoke('settings:update', partial),
+    selectFolder: (): Promise<string | null> => ipcRenderer.invoke('settings:selectFolder'),
   },
   app: {
     openExternal: (url: string): Promise<void> => ipcRenderer.invoke('app:openExternal', url),

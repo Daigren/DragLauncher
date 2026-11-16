@@ -16,14 +16,35 @@ export class ConfigManager {
     this.settings = this.load();
   }
 
+  public getDefaultDataDir(): string {
+    return app ? app.getPath('userData') : path.resolve('./data');
+  }
+
+  public getGameDataDir(): string {
+    return this.settings.gameDataDir || this.getDefaultDataDir();
+  }
+
+  public getInstancesDir(): string {
+    return this.settings.instancesDir || path.join(this.getGameDataDir(), 'instances');
+  }
+
+  public getCommonDir(): string {
+    const common = path.join(this.getGameDataDir(), 'common');
+    if (!fs.existsSync(common)) {
+      fs.mkdirSync(common, { recursive: true });
+    }
+    return common;
+  }
+
   private getDefaultInstancesDir(): string {
-    const userDir = app ? app.getPath('userData') : path.resolve('./data');
-    return path.join(userDir, 'instances');
+    return path.join(this.getDefaultDataDir(), 'instances');
   }
 
   private load(): AppSettings {
+    const defaultData = this.getDefaultDataDir();
     const defaults: AppSettings = {
-      instancesDir: this.getDefaultInstancesDir(),
+      gameDataDir: defaultData,
+      instancesDir: path.join(defaultData, 'instances'),
       defaultJavaPath: 'java',
       defaultMinMemory: 1024,
       defaultMaxMemory: 4096,
@@ -50,6 +71,9 @@ export class ConfigManager {
   }
 
   public updateSettings(partial: Partial<AppSettings>): AppSettings {
+    if (partial.gameDataDir && !partial.instancesDir) {
+      partial.instancesDir = path.join(partial.gameDataDir, 'instances');
+    }
     this.settings = { ...this.settings, ...partial };
     this.save(this.settings);
     return this.getSettings();

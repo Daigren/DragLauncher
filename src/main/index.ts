@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, shell } from 'electron';
+import { app, BrowserWindow, ipcMain, shell, dialog } from 'electron';
 import path from 'path';
 import { configManager } from './config';
 import { accountManager } from './accountManager';
@@ -131,6 +131,15 @@ function setupIpcHandlers() {
   // Settings
   ipcMain.handle('settings:get', () => configManager.getSettings());
   ipcMain.handle('settings:update', (_e, p) => configManager.updateSettings(p));
+  ipcMain.handle('settings:selectFolder', async () => {
+    if (!mainWindow) return null;
+    const res = await dialog.showOpenDialog(mainWindow, {
+      title: 'Выберите папку для данных и версий игры',
+      properties: ['openDirectory', 'createDirectory'],
+    });
+    if (res.canceled || res.filePaths.length === 0) return null;
+    return res.filePaths[0];
+  });
 
   // External Links & Updates
   ipcMain.handle('app:openExternal', (_e, url: string) => shell.openExternal(url));

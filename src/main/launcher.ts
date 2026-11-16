@@ -12,12 +12,7 @@ export class MinecraftLauncher {
   private activeProcesses: Map<string, ChildProcess> = new Map();
 
   private getCommonDir(): string {
-    const baseDir = app ? app.getPath('userData') : path.resolve('./data');
-    const common = path.join(baseDir, 'common');
-    if (!fs.existsSync(common)) {
-      fs.mkdirSync(common, { recursive: true });
-    }
-    return common;
+    return configManager.getCommonDir();
   }
 
   private sendProgress(win: BrowserWindow | null, progress: LaunchProgress): void {

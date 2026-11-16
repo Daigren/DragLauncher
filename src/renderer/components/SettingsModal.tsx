@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Settings, Coffee, HardDrive, Cpu } from 'lucide-react';
+import { X, Settings, Coffee, HardDrive, Cpu, FolderOpen, RotateCcw } from 'lucide-react';
 import { AppSettings } from '../../shared/types';
 
 interface SettingsModalProps {
@@ -102,18 +102,57 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
             />
           </div>
 
-          {/* Instances Dir */}
+          {/* Game Data & Download Directory */}
           <div>
-            <label className="text-xs text-neutral-400 mb-1 flex items-center gap-1.5">
-              <HardDrive size={13} strokeWidth={1.5} />
-              Директория инстансов
-            </label>
-            <input
-              type="text"
-              readOnly
-              value={settings.instancesDir}
-              className="w-full bg-nova-950 border border-nova-border rounded-lg px-3 py-2 text-xs text-neutral-500 font-mono"
-            />
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-xs text-neutral-400 flex items-center gap-1.5">
+                <HardDrive size={13} strokeWidth={1.5} />
+                Папка загрузки и данных игры (версии, ассеты, инстансы)
+              </label>
+              <button
+                type="button"
+                onClick={() => {
+                  setSettings({
+                    ...settings,
+                    gameDataDir: undefined,
+                    instancesDir: '',
+                  });
+                }}
+                className="text-[10px] text-neutral-500 hover:text-white flex items-center gap-1 transition"
+                title="Сбросить на системную папку по умолчанию"
+              >
+                <RotateCcw size={10} />
+                По умолчанию
+              </button>
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                readOnly
+                value={settings.gameDataDir || settings.instancesDir}
+                className="flex-1 bg-nova-950 border border-nova-border rounded-lg px-3 py-2 text-xs text-neutral-300 font-mono truncate"
+              />
+              <button
+                type="button"
+                onClick={async () => {
+                  const folder = await window.api.settings.selectFolder();
+                  if (folder) {
+                    setSettings({
+                      ...settings,
+                      gameDataDir: folder,
+                      instancesDir: `${folder}\\instances`,
+                    });
+                  }
+                }}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-white/15 hover:border-white/40 bg-nova-850 hover:bg-nova-800 text-xs text-white transition shrink-0"
+              >
+                <FolderOpen size={13} />
+                Обзор...
+              </button>
+            </div>
+            <p className="text-[11px] text-neutral-500 mt-1">
+              Сюда будут скачиваться все версии Minecraft, библиотеки, текстуры и сохраняться ваши инстансы.
+            </p>
           </div>
 
           {/* Action buttons */}

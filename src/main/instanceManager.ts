@@ -7,7 +7,7 @@ import { configManager } from './config';
 
 export class InstanceManager {
   private getInstancesDir(): string {
-    const dir = configManager.getSettings().instancesDir;
+    const dir = configManager.getInstancesDir();
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }

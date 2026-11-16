@@ -62,6 +62,7 @@ export interface LaunchProgress {
 }
 
 export interface AppSettings {
+  gameDataDir?: string;
   instancesDir: string;
   defaultJavaPath: string;
   defaultMinMemory: number;
